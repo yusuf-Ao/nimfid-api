@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  datasource:
+    url: jdbc:mysql://localhost:3306/persistence_db
+    username: root
+    password: Letmein
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  zipkin:
+    base-url: http://localhost:9411
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8084/eureka
+
+system-user:
+  id: 001
+  uuid: SMD001
+  username: superbaby
+  password: $2a$12$/Q.vq2K1N/pkTHCYeqmP8eSmim.k8rsU.zF4.VYyL4OnWG3RC/tEe
+  role: SYSTEM_USER
+  firstName: system
+  lastName: system
+  otherNames: system
+  accountStatus: VERIFIED
+  userStatus: ACTIVE
+  email: superbaby.nimfid@admin.io
+
+security:
+  enable-csrf: false
+  jwt:
+    issuer: com.nimfid
+    audience: com.nimfid
+    secret-key: thisisascretcode
+    refresh-token:
+      validFor-seconds: 18000
+    access-token:
+      validFor-seconds: 1800
+    claim-names:
+      authority: userRole
+      userId: userId
+      uuid: uuid
+      subject: sub
+    clock-skew: 10

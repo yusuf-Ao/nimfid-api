@@ -1,0 +1,25 @@
+services:
+
+  nimfid-zipkin:
+    image: openzipkin/zipkin
+    container_name: nimfid-zipkin
+    ports:
+      - "9411:9411"
+
+  nimfid-rabbitmq:
+    image: rabbitmq:3.9.11-management-alpine
+    container_name: nimfid-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
+networks:
+  spring:
+    driver: bridge
+  mysql:
+    driver: bridge
+
+volumes:
+  server-manager-db:
+
