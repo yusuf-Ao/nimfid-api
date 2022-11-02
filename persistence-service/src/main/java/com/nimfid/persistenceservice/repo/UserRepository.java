@@ -33,4 +33,10 @@ public interface UserRepository extends JpaRepository<UserStore, Long> {
             "WHERE u.email=?1", nativeQuery = true)
     void updatePassword(String email, String password, ZonedDateTime dateTime);
 
+    @Query(value = "SELECT COUNT(*) from user_store u WHERE u.user_status = ?1", nativeQuery = true)
+    Integer findTotalUsersStatus(String status);
+
+    @Query(value = "SELECT COUNT(*) from user_store", nativeQuery = true)
+    Integer findTotalUsers();
+
 }

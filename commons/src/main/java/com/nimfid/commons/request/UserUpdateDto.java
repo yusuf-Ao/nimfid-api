@@ -28,26 +28,12 @@ public class UserUpdateDto {
     @NotNull
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date                        dateOfBirth;
-    @NotNull
     private Long                        phoneNumber;
-    @NotNull
-    @NotEmpty
     private String                      country;
-    @NotNull
-    @NotEmpty
     private String                      state;
-    @NotNull
-    @NotEmpty
     private String                      lga;
-    private Long                        pinCode;
-    @NotNull
-    @NotEmpty
     private String                      city;
-    @NotNull
-    @NotEmpty
     private String                      houseNo;
-    @NotNull
-    @NotEmpty
     private String                      streetName;
     private String                      imageUrl;
 

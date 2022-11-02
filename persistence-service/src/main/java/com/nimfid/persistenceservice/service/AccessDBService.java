@@ -8,11 +8,10 @@ import com.nimfid.commons.response.JwtResponse;
 import com.nimfid.commons.token.AuthenticationTokenDetails;
 import com.nimfid.commons.token.AuthenticationTokenParser;
 import com.nimfid.commons.token.AuthenticationTokenService;
+import com.nimfid.commons.util.AdminConfig;
 import com.nimfid.persistenceservice.data.TokenStore;
 import com.nimfid.persistenceservice.repo.TokenRepository;
 import com.nimfid.persistenceservice.repo.UserRepository;
-import com.nimfid.commons.util.AdminConfig;
-import com.nimfid.persistenceservice.util.NotificationUtil;
 import com.nimfid.persistenceservice.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +31,6 @@ public class AccessDBService {
 
     @Autowired
     private final UserRepository userRepository;
-    @Autowired
-    private final NotificationUtil notificationUtil;
     @Autowired
     private final AuthenticationTokenService authenticationTokenService;
     @Autowired
