@@ -2,9 +2,9 @@ package com.nimfid.persistenceservice.service;
 
 
 import com.nimfid.commons.data.UserStore;
-import com.nimfid.commons.exception.CustomException;
-import com.nimfid.commons.request.UserDetails;
+import com.nimfid.commons.enums.UserStatus;
 import com.nimfid.commons.response.PageResponse;
+import com.nimfid.commons.response.SystemDashboardContent;
 import com.nimfid.persistenceservice.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,6 +37,24 @@ public class SystemService {
                 .totalItems(userPage.getTotalElements())
                 .totalPages(userPage.getTotalPages())
                 .build();
+    }
+
+    public SystemDashboardContent getPartialContent() {
+        return SystemDashboardContent.builder()
+                .totalNumberOfUsers(getTotalUsers())
+                .numberOfActiveUsers(getTotalUserByStatus(UserStatus.ACTIVE))
+                .numberOfInactiveUsers(getTotalUserByStatus(UserStatus.INACTIVE))
+                .build();
+    }
+
+    private int getTotalUserByStatus(final UserStatus status) {
+        Integer result = userRepository.findTotalUsersStatus(status.getUserStatus());
+        return result == null ? 0 : result;
+    }
+
+    private int getTotalUsers() {
+        Integer result = userRepository.findTotalUsers();
+        return result == null ? 0 : result;
     }
 
     /*public UserStore getUser(final Long userId) throws CustomException {

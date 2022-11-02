@@ -53,7 +53,6 @@ public class UserCreationDto {
     @NotNull
     @NotEmpty
     private String                      lga;
-    private Long                        pinCode;
     @NotNull
     @NotEmpty
     private String                      city;

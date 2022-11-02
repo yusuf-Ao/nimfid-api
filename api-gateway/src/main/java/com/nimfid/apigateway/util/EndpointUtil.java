@@ -12,7 +12,7 @@ public class EndpointUtil {
                 "/api/v1/user/register","/api/v1/user/verify-account",
                 "/api/v1/user/health-check", "/api/v1/user/email-availability",
                 "/api/v1/user/resend-code", "/api/v1/user/forgot-password",
-                "/api/v1/user/reset-password");
+                "/api/v1/user/reset-password", "/api/v1/model/health-check");
         return r -> openEndpoints.stream()
                 .noneMatch(uri -> r.getURI().getPath().contains(uri));
     }

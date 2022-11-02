@@ -40,6 +40,14 @@ public class GatewayConfig {
                         .filters(f -> f.filter(authenticationFilter)
                                 .filter(systemUserFilter()))
                         .uri("lb://persistence-service"))
+                .route("model-service", r -> r.path("/api/v1/model/**")
+                        .filters(f -> f.filter(authenticationFilter)
+                                .filter(memberUserFilter()))
+                        .uri("lb://model-service"))
+                .route("model-service", r -> r.path("/api/v1/matrix/**")
+                        .filters(f -> f.filter(authenticationFilter)
+                                .filter(systemUserFilter()))
+                        .uri("lb://model-service"))
                 .build();
     }
 
