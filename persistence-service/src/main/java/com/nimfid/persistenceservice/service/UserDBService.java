@@ -106,7 +106,7 @@ public class UserDBService {
                 .email(userCreationDto.getEmail()).password(passwordUtil.passwordEncoder()
                         .encode(userCreationDto.getPassword().trim()))
                 .country(userCreationDto.getCountry()).state(userCreationDto.getState())
-                .lga(userCreationDto.getLga()).pinCode(userCreationDto.getPinCode())
+                .lga(userCreationDto.getLga())
                 .city(userCreationDto.getCity()).houseNo(userCreationDto.getHouseNo())
                 .streetName(userCreationDto.getStreetName()).dateRegistered(zonedDateTime)
                 .lastModified(zonedDateTime).passwordUpdateDate(zonedDateTime)
