@@ -62,12 +62,18 @@ public class AuthenticationTokenParser {
             JWTVerifier verifier        = JWT.require(algorithm)
                     .withAudience(authenticationTokenSettings.getAudience()).build();
             DecodedJWT decodedJWT = verifier.verify(refreshToken);
+            String[] roles = decodedJWT.getClaim(authenticationTokenSettings.getAuthorityClaimName()).asArray(String.class);
+            Collection<UserRoles> authorities = new ArrayList<>();
+            stream(roles).forEach(role -> {
+                authorities.add(UserRoles.valueOf(role));
+            });
             return AuthenticationTokenDetails.builder()
                     .tokenId(decodedJWT.getId())
                     .userId(decodedJWT.getClaim(authenticationTokenSettings.getUserIdClaimName()).asLong())
                     .uuid(decodedJWT.getClaim(authenticationTokenSettings.getUuidClaimName()).asString())
                     .issuedDate(ZonedDateTime.ofInstant(decodedJWT.getIssuedAtAsInstant(), TimeUtil.getZONE_ID()))
                     .expirationDate(ZonedDateTime.ofInstant(decodedJWT.getExpiresAtAsInstant(), TimeUtil.getZONE_ID()))
+                    .userRoles(authorities)
                     .build();
         } catch (final Exception e) {
             final String message = "Invalid refresh token";

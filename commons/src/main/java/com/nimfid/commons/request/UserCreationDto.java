@@ -29,9 +29,10 @@ public class UserCreationDto {
     @NameConstraint
     private String                      lastName;
     private String                      otherNames;
+    @NotNull
     private Gender                      gender;
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date                        dateOfBirth;
     @NotNull
     private Long                        phoneNumber;

@@ -7,6 +7,8 @@ import com.nimfid.commons.request.*;
 import com.nimfid.commons.response.CustomResponse;
 import com.nimfid.commons.util.TimeUtil;
 import com.nimfid.persistenceservice.service.UserDBService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ import java.util.Objects;
 public class UserGateway {
     @Autowired
     private final UserDBService userDBService;
-
+    @Operation(summary = "Persistence Service Health Check", description = "For dev only, to check running status of persistence microservice")
     @GetMapping("/health-check")
     public ResponseEntity<CustomResponse> healthCheck() {
         CustomResponse response = CustomResponse.builder()
@@ -38,6 +40,7 @@ public class UserGateway {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "User Registration", description = "For user registration")
     @PostMapping("/register")
     public ResponseEntity<CustomResponse> registerAccount(@RequestBody @Valid final UserCreationDto userCreationDto) {
         try {
@@ -61,6 +64,7 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Verify Account", description = "To verify a newly registered account using the otp sent to mail")
     @PostMapping("/verify-account")
     public ResponseEntity<CustomResponse> verifyAccount(@NotNull @RequestParam("email") final String email,
                                                         @NotNull @RequestParam("code") final String code) {
@@ -84,6 +88,8 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Check Email Availability",
+            description = "To check email availability at the point of registration.")
     @PostMapping("/email-availability")
     public ResponseEntity<CustomResponse> checkEmailAvailability(@NotNull @RequestParam("email") final String email) {
         try {
@@ -93,7 +99,7 @@ public class UserGateway {
             final CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
                     .statusCode(HttpStatus.OK.value()).status(HttpStatus.OK)
                     .message(message).success(true)
-                    .data(emailExists)
+                    .data(!emailExists)
                     .build();
             log.info("User Email verified Successfully");
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -108,6 +114,8 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Resend verification Code",
+            description = "To request for a new verification code in an event of code expiration or code not initially received")
     @PostMapping("/resend-code")
     public ResponseEntity<CustomResponse> resendVerificationCode(@NotNull @RequestParam("email") final String email) {
         try {
@@ -130,6 +138,9 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Get User Profile",
+            description = "To fetch the profile details of the logged in user",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @GetMapping
     public ResponseEntity<CustomResponse> getUserProfile(@RequestHeader HttpHeaders httpHeaders) {
         try {
@@ -155,6 +166,9 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Update Profile Details",
+            description = "To update profile details of logged in user",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @PutMapping("/update-profile")
     public ResponseEntity<CustomResponse> updateUserProfile(@RequestBody final UserUpdateDto userUpdateDto,
                                                             @RequestHeader HttpHeaders httpHeaders) {
@@ -181,6 +195,9 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Update Password",
+            description = "To update password from dashboard(User needs to be logged in)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @PutMapping("/update-password")
     public ResponseEntity<CustomResponse> updateUserPassword(@RequestBody @Valid final PasswordUpdateDto passwordUpdateDto,
                                                              @RequestHeader HttpHeaders httpHeaders) {
@@ -206,6 +223,8 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Forget password",
+            description = "To request for an OTP code for password reset(Login not required)")
     @PostMapping("/forgot-password")
     public ResponseEntity<CustomResponse> forgotPassword(@RequestParam final String email) {
         try {
@@ -228,6 +247,8 @@ public class UserGateway {
         }
     }
 
+    @Operation(summary = "Reset Password",
+            description = "To be used to reset password upon receiving ForgetPassword OTP. (Login not required)")
     @PostMapping("/reset-password")
     public ResponseEntity<CustomResponse> resetPassword(@RequestBody @Valid final ForgotPasswordRequest forgotPasswordRequest,
                                                         @RequestParam final String email) {

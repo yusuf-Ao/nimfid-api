@@ -53,9 +53,10 @@ public class UserStore {
     @NameConstraint
     private String                      lastName;
     private String                      otherNames;
+    @Enumerated(EnumType.STRING)
     private Gender                      gender;
     @NotNull
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date                        dateOfBirth;
     @NotNull
     private Long                        phoneNumber;
