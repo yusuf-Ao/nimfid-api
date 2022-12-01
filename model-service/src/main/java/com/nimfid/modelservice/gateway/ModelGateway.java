@@ -12,6 +12,8 @@ import com.nimfid.commons.response.PageResponse;
 import com.nimfid.commons.util.TimeUtil;
 import com.nimfid.modelservice.data.OrganizationModel;
 import com.nimfid.modelservice.service.ModelDBService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ public class ModelGateway {
     @Autowired
     private final ModelDBService modelDBService;
 
+    @Operation(summary = "Model Service Health Check", description = "For dev only, to check running status of Model microservice")
     @GetMapping("/health-check")
     public ResponseEntity<CustomResponse> healthCheck() {
         CustomResponse response = CustomResponse.builder()
@@ -43,6 +46,9 @@ public class ModelGateway {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Add org",
+            description = "To add a new organization to a user dashboard(For member users only)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @PostMapping("/add")
     public ResponseEntity<CustomResponse> addOrganization(@RequestBody @Valid final OrgCreationDto orgCreationDto,
                                                     @RequestHeader HttpHeaders httpHeaders) {
@@ -69,6 +75,9 @@ public class ModelGateway {
         }
     }
 
+    @Operation(summary = "Member User Dashboard",
+            description = "To get the dashboard content of the logged in User (Accessible by Member Users only)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @GetMapping("/statistics")
     public ResponseEntity<CustomResponse> getDashboardStats(@RequestHeader HttpHeaders httpHeaders) {
         try {
@@ -94,6 +103,9 @@ public class ModelGateway {
         }
     }
 
+    @Operation(summary = "Update Org Details",
+            description = "To update org details from dashboard(Accessible by Member Users only))",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @PutMapping("/update/{orgId}")
     public ResponseEntity<CustomResponse> updateOrganization(@NotNull @PathVariable("orgId") final Long orgId,
                                                              @RequestBody final OrgUpdateDto orgUpdateDto,
@@ -121,6 +133,9 @@ public class ModelGateway {
         }
     }
 
+    @Operation(summary = "Get Orgs For User",
+            description = "To get detailed list of all organizations associated to the logged in user only(Accessible by Member Users only)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @GetMapping("/fetch-orgs")
     public ResponseEntity<CustomResponse> fetchOrganizations(@RequestParam final int page, @RequestParam final int size,
                                                     @RequestHeader HttpHeaders httpHeaders) {
@@ -147,6 +162,9 @@ public class ModelGateway {
         }
     }
 
+    @Operation(summary = "Delete Org",
+            description = "To delete an org from user dashboard(Accessible by Member Users only)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @DeleteMapping("/delete/{orgId}")
     public ResponseEntity<CustomResponse> deleteOrganization(@NotNull @PathVariable("orgId") final Long orgId,
                                                              @RequestHeader HttpHeaders httpHeaders) {

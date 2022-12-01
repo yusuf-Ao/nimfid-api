@@ -49,9 +49,9 @@ security:
     audience: com.nimfid
     secret-key: thisisascretcode
     refresh-token:
-      validFor-seconds: 18000
+      validFor-seconds: 900
     access-token:
-      validFor-seconds: 1800
+      validFor-seconds: 300
     claim-names:
       authority: userRole
       userId: userId

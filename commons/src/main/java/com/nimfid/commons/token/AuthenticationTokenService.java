@@ -29,6 +29,7 @@ public class AuthenticationTokenService {
     private final AuthenticationTokenSettings     authenticationTokenSettings;
     @Autowired
     private final AuthenticationTokenIssuer       authenticationTokenIssuer;
+
     private AuthenticationTokenDetails            refreshAuthenticationDetails;
     private String                          tokenId;
     private Long                            userId;
@@ -96,12 +97,12 @@ public class AuthenticationTokenService {
         }
 
         if(!tokenExpired) {
-            throw new CustomException(HttpStatus.NOT_ACCEPTABLE,"Token has not expired.");
+            throw new CustomException(HttpStatus.NOT_ACCEPTABLE,"Access token has not expired.");
         }
         try {
             refreshAuthenticationDetails = parseRefreshToken(refreshToken);
         } catch(final RefreshTokenException e) {
-            throw new CustomException(HttpStatus.FORBIDDEN,"Refresh token expired.");
+            throw new CustomException(HttpStatus.FORBIDDEN,"Refresh token expired...Please login");
         }
 
         userId = refreshAuthenticationDetails.getUserId();

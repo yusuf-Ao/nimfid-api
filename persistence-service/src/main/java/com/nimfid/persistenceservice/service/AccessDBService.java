@@ -3,6 +3,7 @@ package com.nimfid.persistenceservice.service;
 import com.nimfid.commons.data.UserStore;
 import com.nimfid.commons.enums.AccountStatus;
 import com.nimfid.commons.exception.CustomException;
+import com.nimfid.commons.exception.RefreshTokenException;
 import com.nimfid.commons.request.UserDetails;
 import com.nimfid.commons.response.JwtResponse;
 import com.nimfid.commons.token.AuthenticationTokenDetails;
@@ -44,7 +45,7 @@ public class AccessDBService {
     private AuthenticationTokenParser authenticationTokenParser;
 
     @Transactional
-    public JwtResponse authenticateUser(final String email, final String loginPassword, final HttpHeaders httpHeaders) {
+    public JwtResponse authenticateUser(final String email, final String loginPassword) {
         try {
             final Optional<UserStore> user = userRepository.findByEmail(email);
             if (user.isEmpty()) {
@@ -83,7 +84,7 @@ public class AccessDBService {
     }
 
     @Transactional
-    public JwtResponse authenticateSystemUser(final String username, final String loginPassword, final HttpHeaders httpHeaders) {
+    public JwtResponse authenticateSystemUser(final String username, final String loginPassword) {
         try {
             final String systemUsername = adminConfig.getUsername();
             final String systemPassword = adminConfig.getPassword();
@@ -136,12 +137,24 @@ public class AccessDBService {
         return tokenRepository.existsByUuidAndToken(uuid, refreshToken);
     }
 
-    public String refreshToken(final String refreshToken, final String currentAuthenticationToken,
-                               final UserDetails userDetails) throws CustomException {
-        if (!isTokenPresent(userDetails.getUuid(), refreshToken)) {
-            final String message = "Invalid refresh token";
+    public String refreshToken(final String refreshToken, final String currentAuthenticationToken)
+            throws CustomException, RefreshTokenException {
+        AuthenticationTokenDetails userDetails;
+        try {
+            userDetails = authenticationTokenParser.parseRefreshToken(refreshToken);
+        } catch (final RefreshTokenException e) {
+            if (tokenRepository.existsByToken(refreshToken)) {
+                tokenRepository.deleteToken(refreshToken);
+            }
+            final String message = "Invalid refresh token...Please Login";
             log.error(message);
-            throw new CustomException(HttpStatus.EXPECTATION_FAILED, message);
+            throw new RefreshTokenException(HttpStatus.FORBIDDEN, message);
+        }
+        final String uuid = userDetails.getUuid();
+        if (!isTokenPresent(uuid, refreshToken)) {
+            final String message = "Invalid refresh token...Please Login";
+            log.error(message);
+            throw new RefreshTokenException(HttpStatus.FORBIDDEN, message);
         }
         return authenticationTokenService.refreshToken(refreshToken, currentAuthenticationToken);
     }

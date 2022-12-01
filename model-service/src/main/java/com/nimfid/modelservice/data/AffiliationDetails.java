@@ -26,5 +26,6 @@ public class AffiliationDetails {
     )
     private Long                            id;
     private String                          affiliationNumber;
+    @Enumerated(EnumType.STRING)
     private AffiliationCategory             affiliationCategory;
 }

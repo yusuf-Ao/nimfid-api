@@ -17,6 +17,7 @@ public class OrgCreationDto {
     @NotEmpty
     @NotNull
     private String                  orgName;
+    @NotNull
     private OrganizationType        organizationType;
     @NotEmpty
     @NotNull
@@ -28,6 +29,8 @@ public class OrgCreationDto {
     @NotEmpty
     @NotNull
     private String                  lga;
+    @NotEmpty
+    @NotNull
     private String                  city;
     @NotEmpty
     @NotNull
@@ -52,6 +55,7 @@ public class OrgCreationDto {
     private Long                    youthSavings;
     private Long                    totalSavings;
     private String                  affiliationNumber;
+    @NotNull
     private AffiliationCategory     affiliationCategory;
 
 }

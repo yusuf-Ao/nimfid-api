@@ -17,7 +17,6 @@ public class LoginRequest {
 
     @NotNull
     @NotEmpty(message = "Username cannot be empty")
-    @EmailConstraint(message = "Please enter a valid email")
     private String username;
     @NotNull
     @NotEmpty

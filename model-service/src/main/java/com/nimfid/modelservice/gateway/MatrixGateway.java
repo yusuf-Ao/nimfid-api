@@ -6,6 +6,8 @@ import com.nimfid.commons.response.PageResponse;
 import com.nimfid.commons.response.SystemDashboardContent;
 import com.nimfid.commons.util.TimeUtil;
 import com.nimfid.modelservice.service.MatrixService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,13 @@ public class MatrixGateway {
     @Autowired
     private final MatrixService matrixService;
 
-
+    @Operation(summary = "Get All Orgs",
+            description = "To get detailed list of all registered orgs(Accessible by System User Only)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @GetMapping("/fetch-orgs")
     public ResponseEntity<CustomResponse> getAllOrgs(@RequestParam final int page, @RequestParam final int size) {
         try {
-            log.info("Trying to fetch all users");
+            log.info("Trying to fetch all orgs");
             final PageResponse userPageResponse = matrixService.getAllOrgs(page, size);
             final CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
                     .statusCode(HttpStatus.OK.value()).status(HttpStatus.OK)
@@ -49,6 +53,9 @@ public class MatrixGateway {
         }
     }
 
+    @Operation(summary = "System User Dashboard",
+            description = "To fetch dashboard content of the logged in user(Accessible by System Users Only)",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @GetMapping("/statistics")
     public ResponseEntity<CustomResponse> getDashboardStats() {
         try {

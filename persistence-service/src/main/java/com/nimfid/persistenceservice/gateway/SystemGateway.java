@@ -6,6 +6,9 @@ import com.nimfid.commons.response.PageResponse;
 import com.nimfid.commons.response.SystemDashboardContent;
 import com.nimfid.commons.util.TimeUtil;
 import com.nimfid.persistenceservice.service.SystemService;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,8 @@ public class SystemGateway {
     @Autowired
     private final SystemService systemService;
 
-
+    @Operation(summary = "Get All Users", description = "To get detailed list of all registered users(Accessible by System users Only).",
+            security = { @SecurityRequirement(name = "Bearer Token") })
     @GetMapping("/fetch-users")
     public ResponseEntity<CustomResponse> getAllUsers(@RequestParam final int page, @RequestParam final int size) {
         try {
@@ -49,6 +53,7 @@ public class SystemGateway {
         }
     }
 
+    @Hidden
     @GetMapping("/partial-response-stats")
     public ResponseEntity<SystemDashboardContent> getStatsPartial() {
         try {

@@ -46,6 +46,9 @@ public class AuthenticationTokenIssuer {
                 .withExpiresAt(Date.from(authenticationTokenDetails.getExpirationDate().toInstant()))
                 .withClaim(authenticationTokenSettings.getUserIdClaimName(), authenticationTokenDetails.getUserId())
                 .withClaim(authenticationTokenSettings.getUuidClaimName(), authenticationTokenDetails.getUuid())
+                .withClaim(authenticationTokenSettings.getAuthorityClaimName(), authenticationTokenDetails.getUserRoles().stream()
+                        .map(UserRoles::getUserRole)
+                        .collect(Collectors.toList()))
                 .sign(algorithmUtil.getAlgorithmForRefreshToken());
     }
 }

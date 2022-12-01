@@ -16,17 +16,13 @@ import java.util.Date;
 @SuperBuilder
 @RequiredArgsConstructor
 public class UserUpdateDto {
-    @NotEmpty(message = "Please provide firstname")
     @NameConstraint
     private String                      firstName;
-    @NotNull
-    @NotEmpty(message = "Please provide lastname/surname")
     @NameConstraint
     private String                      lastName;
     private String                      otherNames;
     private Gender                      gender;
-    @NotNull
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date                        dateOfBirth;
     private Long                        phoneNumber;
     private String                      country;
