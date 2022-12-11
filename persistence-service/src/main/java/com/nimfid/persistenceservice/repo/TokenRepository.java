@@ -17,6 +17,7 @@ public interface TokenRepository extends JpaRepository<TokenStore, Long> {
     @Modifying
     @Query(value = "DELETE from Token_Store t WHERE t.token = ?1",nativeQuery = true)
     void deleteToken(String token);
+    void deleteAllByUuidAndToken(String uuid, String token);
 
     boolean existsByUuidAndToken(String uuid, String token);
     boolean existsByToken(String token);

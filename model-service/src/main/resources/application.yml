@@ -6,15 +6,16 @@ spring:
     name: model-service
   datasource:
     url: jdbc:mysql://localhost:3306/org_db
-    username: root
-    password: Letmein
+    username: tisanyada
+    password: Martins2906
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     hibernate:
-      ddl-auto: 'create-drop'
+      ddl-auto: 'update'
+#      ddl-auto: 'create-drop'
       show-sql: true
 
   zipkin:

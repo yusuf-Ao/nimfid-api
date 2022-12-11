@@ -114,7 +114,7 @@ public class AccessDBService {
 
 
     //TODO:store refresh token tokenId instead of the refresh token itself
-    @Transactional
+//    @Transactional
     public void revokeAccess(final String refreshToken, final UserDetails userDetailDto) throws CustomException {
         try {
             final AuthenticationTokenDetails authDetailsFromToken = authenticationTokenParser.parseRefreshToken(refreshToken);
@@ -125,7 +125,8 @@ public class AccessDBService {
                 log.error(message);
                 throw new CustomException(HttpStatus.EXPECTATION_FAILED, message);
             }
-            tokenRepository.deleteTokenFromStore(uuidFromUserDetails, refreshToken);
+            tokenRepository.deleteAllByUuidAndToken(uuidFromUserDetails, refreshToken);
+//            tokenRepository.deleteTokenFromStore(uuidFromUserDetails, refreshToken);
         } catch (final Exception e) {
             final String message = "Unable to revoke token";
             log.error(message);

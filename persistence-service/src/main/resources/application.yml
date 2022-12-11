@@ -14,7 +14,8 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     hibernate:
-      ddl-auto: 'create-drop'
+      ddl-auto: 'update'
+#      ddl-auto: 'create-drop'
       show-sql: true
 
   zipkin:
@@ -49,7 +50,7 @@ security:
     audience: com.nimfid
     secret-key: thisisascretcode
     refresh-token:
-      validFor-seconds: 900
+      validFor-seconds: 10800
     access-token:
       validFor-seconds: 300
     claim-names:

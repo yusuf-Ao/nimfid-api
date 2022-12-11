@@ -52,7 +52,7 @@ security:
     audience: com.nimfid
     secret-key: thisisascretcode
     refresh-token:
-      validFor-seconds: 900
+      validFor-seconds: 10800
     access-token:
       validFor-seconds: 300
     claim-names:
