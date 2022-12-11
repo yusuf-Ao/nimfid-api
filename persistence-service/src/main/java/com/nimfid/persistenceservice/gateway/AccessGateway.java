@@ -106,13 +106,13 @@ public class AccessGateway {
             log.info("New access token issued");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (final RefreshTokenException e) {
-            final String message = "Invalid Token";
+            final String message = "Refresh Token Expired";
             log.error(message,e);
             CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
-                    .statusCode(HttpStatus.FORBIDDEN.value()).status(HttpStatus.FORBIDDEN)
+                    .statusCode(HttpStatus.UNAUTHORIZED.value()).status(HttpStatus.UNAUTHORIZED)
                     .message(message).reason(e.getMessage()).success(false)
                     .build();
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         } catch (final Exception e) {
             final String message = "Invalid Token";
             log.error(message,e);

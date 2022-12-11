@@ -1,6 +1,7 @@
 package com.nimfid.modelservice.service;
 
 import com.nimfid.commons.enums.OrganizationStatus;
+import com.nimfid.commons.enums.OrganizationType;
 import com.nimfid.commons.exception.CustomException;
 import com.nimfid.commons.request.OrgCreationDto;
 import com.nimfid.commons.request.OrgUpdateDto;
@@ -138,6 +139,19 @@ public class ModelDBService {
                 .totalPages(orgPage.getTotalPages())
                 .build();
     }
+
+    /*public PageResponse findOrganizationsForPublic(final int page, final int size, final String keyword,
+                                                   final OrganizationType organizationType) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrganizationModel> orgPage = organizationRepository.findAllByAuthorizedRepresentativeId(userUID, pageable);
+        List<OrganizationModel> orgs = orgPage.getContent();
+        return PageResponse.builder()
+                .pageContent(orgs)
+                .currentPage(orgPage.getNumber())
+                .totalItems(orgPage.getTotalElements())
+                .totalPages(orgPage.getTotalPages())
+                .build();
+    }*/
 
     @Transactional
     public void deleteOrg(final Long orgId, final UserDetails userDetails) throws CustomException {

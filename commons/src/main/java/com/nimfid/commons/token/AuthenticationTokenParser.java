@@ -52,7 +52,7 @@ public class AuthenticationTokenParser {
         } catch (final Exception e) {
             final String message = "Invalid access token";
             log.error(message,e);
-            throw new AccessTokenException(HttpStatus.FORBIDDEN, message, e);
+            throw new AccessTokenException(HttpStatus.UNAUTHORIZED, message, e);
         }
     }
 
@@ -78,7 +78,7 @@ public class AuthenticationTokenParser {
         } catch (final Exception e) {
             final String message = "Invalid refresh token";
             log.error(message,e);
-            throw new RefreshTokenException(HttpStatus.FORBIDDEN, message, e);
+            throw new RefreshTokenException(HttpStatus.UNAUTHORIZED, message, e);
         }
     }
 }

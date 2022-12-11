@@ -125,7 +125,7 @@ public class AccessDBService {
                 log.error(message);
                 throw new CustomException(HttpStatus.EXPECTATION_FAILED, message);
             }
-            tokenRepository.deleteTokenFromStore(uuidFromUserDetails, refreshToken);
+            tokenRepository.deleteAllByUuidAndToken(uuidFromUserDetails, refreshToken);
         } catch (final Exception e) {
             final String message = "Unable to revoke token";
             log.error(message);
@@ -137,6 +137,7 @@ public class AccessDBService {
         return tokenRepository.existsByUuidAndToken(uuid, refreshToken);
     }
 
+    @Transactional
     public String refreshToken(final String refreshToken, final String currentAuthenticationToken)
             throws CustomException, RefreshTokenException {
         AuthenticationTokenDetails userDetails;
@@ -144,7 +145,7 @@ public class AccessDBService {
             userDetails = authenticationTokenParser.parseRefreshToken(refreshToken);
         } catch (final RefreshTokenException e) {
             if (tokenRepository.existsByToken(refreshToken)) {
-                tokenRepository.deleteToken(refreshToken);
+                tokenRepository.deleteAllByToken(refreshToken);
             }
             final String message = "Invalid refresh token...Please Login";
             log.error(message);

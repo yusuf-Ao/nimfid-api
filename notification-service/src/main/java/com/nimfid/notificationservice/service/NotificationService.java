@@ -30,7 +30,7 @@ public class NotificationService {
         WebhookEmbed.EmbedField field4 = null;
 
         switch (notificationType) {
-            case EMAIL_VERIFICATION -> {
+            case EMAIL_VERIFICATION:
                 builder = new WebhookClientBuilder(EMAIL_WEBHOOK);
                 title = new WebhookEmbed.EmbedTitle("NIMFID Email Verification Code", null);
                 field1 = new WebhookEmbed.EmbedField(true, "RECIPIENT",
@@ -41,8 +41,8 @@ public class NotificationService {
                         userNotificationRequest.getTimeOfEvent());
                 field4 = new WebhookEmbed.EmbedField(true, "VALIDITY",
                         "This code will be valid for 15MINs Only!.");
-            }
-            case PASSWORD_OTP -> {
+                break;
+            case PASSWORD_OTP:
                 builder = new WebhookClientBuilder(FORGOT_PSWD_WEBHOOK);
                 title = new WebhookEmbed.EmbedTitle("NIMFID FORGOT PASSWORD OTP ", null);
                 field1 = new WebhookEmbed.EmbedField(true, "RECIPIENT",
@@ -53,8 +53,11 @@ public class NotificationService {
                         userNotificationRequest.getTimeOfEvent());
                 field4 = new WebhookEmbed.EmbedField(true, "VALIDITY",
                         "This code will be valid for 5MINS Only!.");
-            }
+                break;
+            default:
+                break;
         }
+
         WebhookClient client = builder.build();
         builder.setThreadFactory((job) -> {
             Thread thread = new Thread(job);
