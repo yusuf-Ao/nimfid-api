@@ -138,6 +138,7 @@ public class AccessDBService {
         return tokenRepository.existsByUuidAndToken(uuid, refreshToken);
     }
 
+    @Transactional
     public String refreshToken(final String refreshToken, final String currentAuthenticationToken)
             throws CustomException, RefreshTokenException {
         AuthenticationTokenDetails userDetails;
@@ -145,7 +146,7 @@ public class AccessDBService {
             userDetails = authenticationTokenParser.parseRefreshToken(refreshToken);
         } catch (final RefreshTokenException e) {
             if (tokenRepository.existsByToken(refreshToken)) {
-                tokenRepository.deleteToken(refreshToken);
+                tokenRepository.deleteAllByToken(refreshToken);
             }
             final String message = "Invalid refresh token...Please Login";
             log.error(message);

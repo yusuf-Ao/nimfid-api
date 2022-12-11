@@ -57,6 +57,7 @@ public class NotificationService {
             default:
                 break;
         }
+
         WebhookClient client = builder.build();
         builder.setThreadFactory((job) -> {
             Thread thread = new Thread(job);

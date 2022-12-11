@@ -45,7 +45,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
                 if (!request.getURI().getPath().endsWith("/refresh-token")) {
                     if (rolesAllowed.size() > 0 && !isAuthenticated(exchange)) {
                         final String message = "Authentication is required to proceed";
-                        response.setStatusCode(FORBIDDEN);
+                        response.setStatusCode(UNAUTHORIZED);
                         byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
                         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
                         log.error(message);
@@ -59,7 +59,7 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
                         }
                     }
                     final String message = "Access Denied";
-                    response.setStatusCode(UNAUTHORIZED);
+                    response.setStatusCode(FORBIDDEN);
                     byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
                     DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
                     log.error(message);

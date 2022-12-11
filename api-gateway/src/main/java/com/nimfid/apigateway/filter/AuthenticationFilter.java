@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 
 @Component
@@ -48,7 +49,7 @@ public class AuthenticationFilter implements GatewayFilter {
             final boolean isAuthorizationHeader = request.getHeaders().containsKey(AUTHORIZATION);
             if (!isAuthorizationHeader) {
                 final String message = "Request does not have relevant authorization";
-                response.setStatusCode(FORBIDDEN);
+                response.setStatusCode(UNAUTHORIZED);
                 byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
                 DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
                 log.error(message);
@@ -60,7 +61,7 @@ public class AuthenticationFilter implements GatewayFilter {
                 final String[] parts = authHeader.split(" ");
                 if (parts.length != 2 || !"Bearer".equals(parts[0])) {
                     final String message = "Incorrect Auth Structure";
-                    response.setStatusCode(FORBIDDEN);
+                    response.setStatusCode(UNAUTHORIZED);
                     byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
                     DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
                     log.error(message);
@@ -78,7 +79,7 @@ public class AuthenticationFilter implements GatewayFilter {
                     final Optional<UserDetails> userDetails = fraudCheck.verifyUserExistence(userId,uuid);
                     if (userDetails.isEmpty()) {
                         final String message = "User is Fraud";
-                        response.setStatusCode(FORBIDDEN);
+                        response.setStatusCode(UNAUTHORIZED);
                         byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
                         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
                         log.error(message);
@@ -92,7 +93,7 @@ public class AuthenticationFilter implements GatewayFilter {
 
             } catch (final Exception e) {
                 final String message = e.getMessage();
-                response.setStatusCode(FORBIDDEN);
+                response.setStatusCode(UNAUTHORIZED);
                 byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
                 DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
                 log.error(message);
