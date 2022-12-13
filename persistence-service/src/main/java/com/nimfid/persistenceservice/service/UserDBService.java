@@ -111,7 +111,7 @@ public class UserDBService {
                 .streetName(userCreationDto.getStreetName()).dateRegistered(zonedDateTime)
                 .lastModified(zonedDateTime).passwordUpdateDate(zonedDateTime)
                 .imageUrl("blank").accountStatus(AccountStatus.UNVERIFIED)
-                .userStatus(UserStatus.RESTRICTED).userRoles(userRoles)
+                .userStatus(UserStatus.INACTIVE).userRoles(userRoles)
                 .build();
         saveUser(user);
 

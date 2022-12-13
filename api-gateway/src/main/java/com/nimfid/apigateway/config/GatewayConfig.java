@@ -48,6 +48,10 @@ public class GatewayConfig {
                         .filters(f -> f.filter(authenticationFilter)
                                 .filter(systemUserFilter()))
                         .uri("lb://model-service"))
+                .route("model-service", r -> r.path("/api/v1/public/**")
+                        .filters(f -> f.filter(authenticationFilter)
+                                .filter(allUserFilter()))
+                        .uri("lb://model-service"))
                 .build();
     }
 

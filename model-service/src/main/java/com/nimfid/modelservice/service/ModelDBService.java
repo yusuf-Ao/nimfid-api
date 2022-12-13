@@ -1,7 +1,6 @@
 package com.nimfid.modelservice.service;
 
 import com.nimfid.commons.enums.OrganizationStatus;
-import com.nimfid.commons.enums.OrganizationType;
 import com.nimfid.commons.exception.CustomException;
 import com.nimfid.commons.request.OrgCreationDto;
 import com.nimfid.commons.request.OrgUpdateDto;
@@ -25,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -140,18 +140,17 @@ public class ModelDBService {
                 .build();
     }
 
-    /*public PageResponse findOrganizationsForPublic(final int page, final int size, final String keyword,
-                                                   final OrganizationType organizationType) {
+    public PageResponse findOrganizationsForPublic(final int page, final int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<OrganizationModel> orgPage = organizationRepository.findAllByAuthorizedRepresentativeId(userUID, pageable);
-        List<OrganizationModel> orgs = orgPage.getContent();
+        Page<Map<String, Object>> orgPage = organizationRepository.findAllForPublic(pageable);
+        List<Map<String, Object>> orgs = orgPage.getContent();
         return PageResponse.builder()
                 .pageContent(orgs)
                 .currentPage(orgPage.getNumber())
                 .totalItems(orgPage.getTotalElements())
                 .totalPages(orgPage.getTotalPages())
                 .build();
-    }*/
+    }
 
     @Transactional
     public void deleteOrg(final Long orgId, final UserDetails userDetails) throws CustomException {
