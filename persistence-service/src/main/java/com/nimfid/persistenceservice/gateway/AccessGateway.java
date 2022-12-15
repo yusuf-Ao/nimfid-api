@@ -100,22 +100,14 @@ public class AccessGateway {
                     .build();
             log.info("New access token issued");
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (final RefreshTokenException e) {
-            final String message = "Refresh Token Expired";
+        } catch (final Exception e) {
+            final String message = "Invalid Refresh Token";
             log.error(message,e);
             CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
                     .statusCode(HttpStatus.UNAUTHORIZED.value()).status(HttpStatus.UNAUTHORIZED)
                     .message(message).reason(e.getMessage()).success(false)
                     .build();
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        } catch (final Exception e) {
-            final String message = "Invalid Token";
-            log.error(message,e);
-            CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
-                    .statusCode(HttpStatus.EXPECTATION_FAILED.value()).status(HttpStatus.EXPECTATION_FAILED)
-                    .message(message).reason(e.getMessage()).success(false)
-                    .build();
-            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
