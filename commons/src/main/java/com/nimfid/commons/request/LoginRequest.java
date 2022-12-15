@@ -1,6 +1,5 @@
 package com.nimfid.commons.request;
 
-import com.nimfid.commons.validation.constraint.EmailConstraint;
 import com.nimfid.commons.validation.constraint.PasswordConstraint;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

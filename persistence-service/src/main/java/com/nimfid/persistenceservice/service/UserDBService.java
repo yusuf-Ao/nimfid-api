@@ -111,19 +111,20 @@ public class UserDBService {
                 .streetName(userCreationDto.getStreetName()).dateRegistered(zonedDateTime)
                 .lastModified(zonedDateTime).passwordUpdateDate(zonedDateTime)
                 .imageUrl("blank").accountStatus(AccountStatus.UNVERIFIED)
-                .userStatus(UserStatus.RESTRICTED).userRoles(userRoles)
+                .userStatus(UserStatus.INACTIVE).userRoles(userRoles)
                 .build();
         saveUser(user);
 
         final String verificationCode = generateVerificationCode(user);
-        sendVerificationCode(user.getEmail(), verificationCode);
+        final String mailContent = buildEmailForVerification(verificationCode, user.getLastName());
+        sendVerificationCode(user.getEmail(), mailContent);
         return user;
     }
 
-    private void sendVerificationCode(final String email, final String verificationCode) {
+    private void sendVerificationCode(final String email, final String mailContent) {
         UserNotificationRequest newUserNotificationRequest = UserNotificationRequest.builder()
                 .recipientEmail(email)
-                .verificationCode(verificationCode)
+                .mailContent(mailContent)
                 .timeOfEvent(TimeUtil.getFormattedDateTimeOfInstant())
                 .notificationType(NotificationType.EMAIL_VERIFICATION)
                 .build();
@@ -216,7 +217,8 @@ public class UserDBService {
             verificationCodeRepository.deleteByUserId(userId);
         }
         final String newCode = generateVerificationCode(userStore.get());
-        sendVerificationCode(email, newCode);
+        final String mailContent = buildEmailForVerification(newCode, userStore.get().getLastName());
+        sendVerificationCode(email, mailContent);
 
     }
 
@@ -305,9 +307,10 @@ public class UserDBService {
             forgotPasswordRepository.deleteByUserId(userId);
         }
         final String otp = generateOTPForPassword(userStore.get());
+        final String mailContent = buildEmailForPasswordReset(otp, userStore.get().getLastName());
         UserNotificationRequest newUserNotificationRequest = UserNotificationRequest.builder()
                 .recipientEmail(email)
-                .verificationCode(otp)
+                .mailContent(mailContent)
                 .timeOfEvent(TimeUtil.getFormattedDateTimeOfInstant())
                 .notificationType(NotificationType.PASSWORD_OTP)
                 .build();
@@ -348,5 +351,107 @@ public class UserDBService {
         ZonedDateTime passwordUpdateTime = TimeUtil.getZonedDateTimeOfInstant();
         userRepository.updatePassword(email, encodedPassword, passwordUpdateTime);
         forgotPasswordRepository.deleteByOtpAndUserId(otp, userId);
+    }
+
+    private String buildEmailForVerification(final String code, final String name) {
+        return "<div width=\"100%\" style=\"margin:0;background-color:#f0f2f3\">\n" +
+                "\n" +
+                "<div style=\"margin:auto;max-width:600px;padding-top:50px\" class=\"m_-8396911486253730526email-container\">\n" +
+                "    \n" +
+                "    \n" +
+                "    \n" +
+                "    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" align=\"center\" id=\"m_-8396911486253730526logoContainer\" style=\"background:#252f3d;border-radius:3px 3px 0 0;max-width:600px\">\n" +
+                "        <tbody><tr>\n" +
+                "            <td style=\"background:#F4F4F4;border-radius:3px 3px 0 0;padding:20px 0 10px 0;text-align:center\">\n" +
+                "                <img src=\"src/main/resources/static/NiMFID.png\" width=\"160\" height=\"45\" alt=\"NiMFID\" border=\"0\" style=\"font-family:sans-serif;font-size:15px;line-height:140%;color:#555555\" class=\"CToWUd\" data-bit=\"iit\">\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    </tbody></table>\n" +
+                "    \n" +
+                "    \n" +
+                "    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" align=\"center\" id=\"m_-8396911486253730526emailBodyContainer\" style=\"border:0px;border-bottom:1px solid #d6d6d6;max-width:600px\">\n" +
+                "        <tbody><tr>\n" +
+                "            <td style=\"background-color:#fff;color:#444;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:14px;line-height:140%;padding:25px 35px\">\n" +
+                "                <h3 style=\"font-size:16px;font-weight:normal ;line-height:1.3;margin:0 0 15px 0\">Hi "+name+",</h3>\n" +
+                "                <h1 style=\"font-size:20px;font-weight:bold;line-height:1.3;margin:0 0 15px 0\">Verify your email address</h1>\n" +
+                "                <p style=\"margin:0;padding:0\">Thanks for starting the new NiMFID account creation process. We want to make sure it's really you. Please enter the following verification code when prompted. We hope to see you onboard!..</p>\n" +
+                "                <p style=\"margin:0;padding:0\"></p>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "        <tr>\n" +
+                "            <td style=\"background-color:#fff;color:#444;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:14px;line-height:140%;padding:25px 35px;padding-top:0;text-align:center\">\n" +
+                "                <div style=\"font-weight:bold;padding-bottom:15px\">Verification code</div>\n" +
+                "                <div style=\"color:#000;font-size:36px;font-weight:bold;padding-bottom:15px\">"+code+"</div>\n" +
+                "                <div>(This code is valid for 15 minutes)</div>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    \n" +
+                "    </tbody></table>\n" +
+                "    \n" +
+                "    \n" +
+                "    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" align=\"center\" id=\"m_-8396911486253730526footer\" style=\"max-width:600px\">\n" +
+                "        <tbody><tr>\n" +
+                "            <td style=\"color:#777;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:12px;line-height:16px;padding:20px 30px;text-align:center\">\n" +
+                "                This message was produced and distributed by NiMFID © 2022.All rights reserved. NiMFID is a registered trademark of <a href=\"#\" data-saferedirecturl=\"#\">nimfid.org</a>. View our <a href=\"#\"  data-saferedirecturl=\"#\">privacy policy</a>.\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    </tbody></table>\n" +
+                "    \n" +
+                "    \n" +
+                "</div>\n" +
+                "\n" +
+                "<img alt=\"\" src=\"https://ci6.googleusercontent.com/proxy/P21Cf0BPsMvipsGz71yLseGSngiRtp_sB65cQphtSLQyRtM4PX64eUfPDTCpRQlto-6dhQRc1ZALTnLkocoQso0q-1dM0yTfylqvsD3adN6kYjpFkBXpY2WmfnuNX_uU0ILLTHEsMFoD65v92JVZT5Tr5MtocEki_7MNLYg3NhwHHsSU0WYGUeTBaFFF158KGdhDOptWirBwu4y9=s0-d-e1-ft#https://bjdxkhre.r.us-east-1.awstrack.me/I0/01000183f4056114-367763b5-887d-4eeb-ad1d-efe90005d7d3-000000/5YjEJ7yp9wXA1e9Xk86oiNVJ-84=292\" style=\"display:none;width:1px;height:1px\" class=\"CToWUd\" data-bit=\"iit\"><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
+                "</div></div>";
+    }
+
+    private String buildEmailForPasswordReset(final String code, final String name) {
+        return "<div width=\"100%\" style=\"margin:0;background-color:#f0f2f3\">\n" +
+                "\n" +
+                "<div style=\"margin:auto;max-width:600px;padding-top:50px\" class=\"m_-8396911486253730526email-container\">\n" +
+                "    \n" +
+                "    \n" +
+                "    \n" +
+                "    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" align=\"center\" id=\"m_-8396911486253730526logoContainer\" style=\"background:#252f3d;border-radius:3px 3px 0 0;max-width:600px\">\n" +
+                "        <tbody><tr>\n" +
+                "            <td style=\"background:#F4F4F4;border-radius:3px 3px 0 0;padding:20px 0 10px 0;text-align:center\">\n" +
+                "                <img src=\"src/main/resources/static/NiMFID.png\" width=\"160\" height=\"45\" alt=\"NiMFID\" border=\"0\" style=\"font-family:sans-serif;font-size:15px;line-height:140%;color:#555555\" class=\"CToWUd\" data-bit=\"iit\">\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    </tbody></table>\n" +
+                "    \n" +
+                "    \n" +
+                "    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" align=\"center\" id=\"m_-8396911486253730526emailBodyContainer\" style=\"border:0px;border-bottom:1px solid #d6d6d6;max-width:600px\">\n" +
+                "        <tbody><tr>\n" +
+                "            <td style=\"background-color:#fff;color:#444;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:14px;line-height:140%;padding:25px 35px\">\n" +
+                "                <h3 style=\"font-size:16px;font-weight:normal ;line-height:1.3;margin:0 0 15px 0\">Hi "+name+",</h3>\n" +
+                "                <h1 style=\"font-size:20px;font-weight:bold;line-height:1.3;margin:0 0 15px 0\">Password Reset</h1>\n" +
+                "                <p style=\"margin:0;padding:0\">Someone is trying to reset your password. If it is you, please enter the following verification code when prompted..</p>\n" +
+                "                <p style=\"margin:0;padding:0\"></p>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "        <tr>\n" +
+                "            <td style=\"background-color:#fff;color:#444;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:14px;line-height:140%;padding:25px 35px;padding-top:0;text-align:center\">\n" +
+                "                <div style=\"font-weight:bold;padding-bottom:15px\">Verification code</div>\n" +
+                "                <div style=\"color:#000;font-size:36px;font-weight:bold;padding-bottom:15px\">"+code+"</div>\n" +
+                "                <div>(This code is valid for 5 minutes)</div>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    \n" +
+                "    </tbody></table>\n" +
+                "    \n" +
+                "    \n" +
+                "    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" align=\"center\" id=\"m_-8396911486253730526footer\" style=\"max-width:600px\">\n" +
+                "        <tbody><tr>\n" +
+                "            <td style=\"color:#777;font-family:'Amazon Ember','Helvetica Neue',Roboto,Arial,sans-serif;font-size:12px;line-height:16px;padding:20px 30px;text-align:center\">\n" +
+                "                This message was produced and distributed by NiMFID © 2022.All rights reserved. NiMFID is a registered trademark of <a href=\"#\" data-saferedirecturl=\"#\">nimfid.org</a>. View our <a href=\"#\"  data-saferedirecturl=\"#\">privacy policy</a>.\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    </tbody></table>\n" +
+                "    \n" +
+                "    \n" +
+                "</div>\n" +
+                "\n" +
+                "<img alt=\"\" src=\"https://ci6.googleusercontent.com/proxy/P21Cf0BPsMvipsGz71yLseGSngiRtp_sB65cQphtSLQyRtM4PX64eUfPDTCpRQlto-6dhQRc1ZALTnLkocoQso0q-1dM0yTfylqvsD3adN6kYjpFkBXpY2WmfnuNX_uU0ILLTHEsMFoD65v92JVZT5Tr5MtocEki_7MNLYg3NhwHHsSU0WYGUeTBaFFF158KGdhDOptWirBwu4y9=s0-d-e1-ft#https://bjdxkhre.r.us-east-1.awstrack.me/I0/01000183f4056114-367763b5-887d-4eeb-ad1d-efe90005d7d3-000000/5YjEJ7yp9wXA1e9Xk86oiNVJ-84=292\" style=\"display:none;width:1px;height:1px\" class=\"CToWUd\" data-bit=\"iit\"><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
+                "</div></div>";
     }
 }

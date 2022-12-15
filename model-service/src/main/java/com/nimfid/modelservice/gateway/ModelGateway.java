@@ -152,7 +152,7 @@ public class ModelGateway {
             log.info("Organization fetched Successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (final Exception e) {
-            final String message = "Unable to add organization to the database";
+            final String message = "Unable to fetch organization list";
             log.error(message,e);
             CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
                     .statusCode(HttpStatus.EXPECTATION_FAILED.value()).status(HttpStatus.EXPECTATION_FAILED)

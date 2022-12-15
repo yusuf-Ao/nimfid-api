@@ -10,9 +10,6 @@ import com.nimfid.commons.response.JwtResponse;
 import com.nimfid.commons.util.TimeUtil;
 import com.nimfid.persistenceservice.service.AccessDBService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.ws.rs.HeaderParam;
 import java.util.Objects;
 
 
@@ -105,22 +100,14 @@ public class AccessGateway {
                     .build();
             log.info("New access token issued");
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (final RefreshTokenException e) {
-            final String message = "Refresh Token Expired";
+        } catch (final Exception e) {
+            final String message = "Invalid Refresh Token";
             log.error(message,e);
             CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
                     .statusCode(HttpStatus.UNAUTHORIZED.value()).status(HttpStatus.UNAUTHORIZED)
                     .message(message).reason(e.getMessage()).success(false)
                     .build();
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        } catch (final Exception e) {
-            final String message = "Invalid Token";
-            log.error(message,e);
-            CustomResponse response = CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
-                    .statusCode(HttpStatus.EXPECTATION_FAILED.value()).status(HttpStatus.EXPECTATION_FAILED)
-                    .message(message).reason(e.getMessage()).success(false)
-                    .build();
-            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
         }
     }
 

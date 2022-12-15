@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 public class UserNotificationRequest {
 
     private String              recipientEmail;
-    private String              verificationCode;
+    private String              mailContent;
     private String              timeOfEvent;
     private NotificationType    notificationType;
 }
