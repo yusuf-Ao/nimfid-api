@@ -43,4 +43,6 @@ public class ContactDetails {
     @NotNull
     private Long                    officePhone;
     private String                  website;
+    private Double                  latitude;
+    private Double                  longitude;
 }

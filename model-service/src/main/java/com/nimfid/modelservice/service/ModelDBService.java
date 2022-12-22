@@ -1,5 +1,6 @@
 package com.nimfid.modelservice.service;
 
+import com.google.maps.model.LatLng;
 import com.nimfid.commons.enums.OrganizationStatus;
 import com.nimfid.commons.exception.CustomException;
 import com.nimfid.commons.request.OrgCreationDto;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +48,9 @@ public class ModelDBService {
     private final OutstandingPortfolioRepository portfolioRepository;
     @Autowired
     private final SavingsMobilizedRepository savingsMobilizedRepository;
+
+    @Autowired
+    private final CoordinateConverter coordinateConverter;
     private final OrgUIDUtil orgUIDUtil;
 
     @Transactional
@@ -64,11 +69,17 @@ public class ModelDBService {
 
         }
 
+        String officeAddress = orgCreationDto.getOfficeAddress();
+        String city = orgCreationDto.getCity();
+        String lga = orgCreationDto.getLga();
+        String state = orgCreationDto.getState();
+        LatLng coordinates = coordinateConverter.convertToLatLng(officeAddress,city,lga,state);
+
         final ContactDetails contactDetails = ContactDetails.builder()
-                        .officeAddress(orgCreationDto.getOfficeAddress())
+                        .officeAddress(officeAddress)
                         .village_ward(orgCreationDto.getVillage_ward())
-                        .state(orgCreationDto.getState()).lga(orgCreationDto.getLga())
-                        .city(orgCreationDto.getCity())
+                        .state(state).lga(lga)
+                        .city(city).latitude(coordinates.lat).longitude(coordinates.lng)
                         .officialEmail(orgCreationDto.getOfficialEmail())
                         .officePhone(orgCreationDto.getOfficePhone())
                         .website(orgCreationDto.getWebsite())
@@ -140,9 +151,15 @@ public class ModelDBService {
                 .build();
     }
 
-    public PageResponse findOrganizationsForPublic(final int page, final int size) {
+    public Object findOrganizationsForPublic(final int page, final int size, final String query,
+                                             final Collection<String> location, final Collection<String> orgTypes,
+                                             final Collection<String> categories, final boolean showMap) {
+        if (showMap) {
+            return organizationRepository.findAllForPublicMap(query,location,orgTypes,categories);
+        }
         Pageable pageable = PageRequest.of(page, size);
-        Page<Map<String, Object>> orgPage = organizationRepository.findAllForPublic(pageable);
+        Page<Map<String, Object>> orgPage = organizationRepository
+                .findAllForPublic(query,location,orgTypes,categories,pageable);
         List<Map<String, Object>> orgs = orgPage.getContent();
         return PageResponse.builder()
                 .pageContent(orgs)
@@ -208,6 +225,13 @@ public class ModelDBService {
             CopyUtils.copyProperties(buildSavingsFromUpdate(orgUpdateDto),savingsMobilized);
             CopyUtils.copyProperties(buildOutPortfolioFromUpdate(orgUpdateDto),outstandingPortfolio);
 
+            String officeAddress = contactDetails.getOfficeAddress();
+            String city = contactDetails.getCity();
+            String lga = contactDetails.getLga();
+            String state = contactDetails.getState();
+            LatLng coordinates = coordinateConverter.convertToLatLng(officeAddress,city,lga,state);
+            contactDetails.setLatitude(coordinates.lat);
+            contactDetails.setLongitude(coordinates.lng);
             contactDetailsRepository.save(contactDetails);
             membersRepository.save(members);
             affiliationDetailsRepository.save(affiliationDetails);

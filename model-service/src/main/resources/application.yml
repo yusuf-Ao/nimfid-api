@@ -14,7 +14,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     hibernate:
-      ddl-auto: 'create-drop'
+      ddl-auto: 'update'
       show-sql: true
 
   zipkin:
@@ -58,3 +58,7 @@ security:
       uuid: uuid
       subject: sub
     clock-skew: 10
+
+api-keys:
+  google:
+    maps: AIzaSyCVucpkQ9qcC4YuR1GC21RKKzlQvdsnb-o

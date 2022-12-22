@@ -2,7 +2,6 @@ package com.nimfid.modelservice.gateway;
 
 
 import com.nimfid.commons.response.CustomResponse;
-import com.nimfid.commons.response.PageResponse;
 import com.nimfid.commons.util.TimeUtil;
 import com.nimfid.modelservice.service.ModelDBService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/api/v1/public")
 @RequiredArgsConstructor
@@ -28,10 +29,17 @@ public class PublicGateway {
     @Operation(summary = "Fetch Orgs summary",
             description = "To get summarized list of all organizations for public search")
     @GetMapping("/find-org")
-    public ResponseEntity<CustomResponse> fetchOrganizationsRecord(@RequestParam final int page, @RequestParam final int size) {
+    public ResponseEntity<CustomResponse> fetchOrganizationsRecord(@RequestParam(required = false) final Integer page,
+                                                                   @RequestParam(required = false) final Integer size,
+                                                                   @RequestParam(required = false) final String query,
+                                                                   @RequestParam(required = false) final Collection<String> location,
+                                                                   @RequestParam(required = false) final Collection<String> orgTypes,
+                                                                   @RequestParam(required = false) final Collection<String> categories,
+                                                                   @RequestParam final Boolean showMap) {
         try {
             log.info("Starting to get organization");
-            final PageResponse pageResponse = modelDBService.findOrganizationsForPublic(page, size);
+            final Object pageResponse = modelDBService
+                    .findOrganizationsForPublic(page,size,query,location,orgTypes,categories,showMap);
             final CustomResponse response =  CustomResponse.builder().timeStamp(TimeUtil.getFormattedDateTimeOfInstant())
                     .statusCode(HttpStatus.OK.value()).status(HttpStatus.OK)
                     .message("Organization fetched Successfully.").success(true)
