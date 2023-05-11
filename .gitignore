@@ -34,5 +34,5 @@ build/
 
 
 ### User defined ###
-*.application.yml
-*.application-docker.yml
+**/application.yml
+**/application-docker.yml
