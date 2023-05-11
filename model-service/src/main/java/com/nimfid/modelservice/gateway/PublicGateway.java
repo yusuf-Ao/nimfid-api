@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +30,8 @@ public class PublicGateway {
     @Operation(summary = "Fetch Orgs summary",
             description = "To get summarized list of all organizations for public search")
     @GetMapping("/find-org")
-    public ResponseEntity<CustomResponse> fetchOrganizationsRecord(@RequestParam(required = false) final Integer page,
-                                                                   @RequestParam(required = false) final Integer size,
+    public ResponseEntity<CustomResponse> fetchOrganizationsRecord(@RequestParam @Nullable final Integer page,
+                                                                   @RequestParam @Nullable final Integer size,
                                                                    @RequestParam(required = false) final String query,
                                                                    @RequestParam(required = false) final Collection<String> location,
                                                                    @RequestParam(required = false) final Collection<String> orgTypes,
